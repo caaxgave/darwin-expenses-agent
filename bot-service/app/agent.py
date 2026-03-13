@@ -9,6 +9,9 @@ from prompts import SYSTEM_PROMPT
 
 warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
 
+# ✅ Create logs directory before setting up file handler
+os.makedirs("logs", exist_ok=True)
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
