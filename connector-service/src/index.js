@@ -13,7 +13,7 @@ const PYTHON_SERVICE_URL = process.env.PYTHON_SERVICE_URL || "http://localhost:8
 const WEBHOOK_DOMAIN = process.env.WEBHOOK_DOMAIN; // e.g. https://your-domain.com
 
 if (!TELEGRAM_BOT_TOKEN) {
-    console.error("❌ TELEGRAM_BOT_TOKEN is not set");
+    console.error("sTELEGRAM_BOT_TOKEN is not set");
     process.exit(1);
 }
 
@@ -21,7 +21,6 @@ if (!TELEGRAM_BOT_TOKEN) {
 const app = express();
 const bot = new Telegraf(TELEGRAM_BOT_TOKEN);
 
-// ✅ MUST be before express.json() and all other routes
 app.use(bot.webhookCallback("/webhook"));
 
 app.use(express.json());
@@ -37,7 +36,7 @@ bot.on("text", async (ctx) => {
     const chatId = ctx.chat.id;
     const message = ctx.message.text;
 
-    console.log(`📩 Received message from user ${userId}: ${message}`);
+    console.log(`Received message from user ${userId}: ${message}`);
 
     try {
         const result = await processMessage(userId, message); // ← use botClient
@@ -48,24 +47,26 @@ bot.on("text", async (ctx) => {
             await sendFallbackMessage(chatId);
         }
     } catch (error) {
-        console.error(`❌ Error processing message: ${error.message}`);
+        console.error(`Error processing message: ${error.message}`);
         await sendErrorMessage(chatId);
     }
 });
 
 // ── Start server ──────────────────────────────────────────────────────────────
 app.listen(PORT, async () => {
-    console.log(`🚀 Connector service running on port ${PORT}`);
+    console.log(`Connector service running on port ${PORT}`);
+    console.log(`WEBHOOK_DOMAIN: ${WEBHOOK_DOMAIN}`);  // ✅ debug
+    console.log(`TELEGRAM_BOT_TOKEN set: ${!!TELEGRAM_BOT_TOKEN}`);  // ✅ debug
 
     if (WEBHOOK_DOMAIN) {
-        // Production: set webhook
-        await bot.telegram.setWebhook(`https://${WEBHOOK_DOMAIN}/webhook`);
-        console.log(`🔗 Webhook set to: https://${WEBHOOK_DOMAIN}/webhook`);
+        const webhookUrl = `https://${WEBHOOK_DOMAIN}/webhook`;
+        console.log(`🔗 Setting webhook to: ${webhookUrl}`);  // ✅ debug
+        await bot.telegram.setWebhook(webhookUrl);
+        console.log(`Webhook set successfully`);
     } else {
-        // Development: use long polling
         await bot.telegram.deleteWebhook();
         bot.launch();
-        console.log("🔄 Using long polling (development mode)");
+        console.log("Using long polling (development mode)");
     }
 });
 
