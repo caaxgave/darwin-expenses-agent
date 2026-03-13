@@ -1,0 +1,9 @@
+langchain-core
+langchain-openai
+pydantic
+openai
+python-dotenv
+colorlog
+fastapi
+uvicorn
+asyncpg
