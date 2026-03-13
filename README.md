@@ -62,6 +62,37 @@ Darwin Expenses Bot uses **GPT-4o-mini** for expense extraction. This was a deli
 - ✅ Sufficient accuracy for entity extraction (description, amount, category)
 - ✅ Reliable structured output via LangChain
 
+### 🧪 Accuracy Test
+
+20 real-world expense messages were sent to the bot to evaluate categorization accuracy:
+
+| Message | Amount | Category | Correct? |
+|---|---|---|---|
+| rent | $15,000.00 | Housing | ✅ |
+| floor tiles for bathroom renovation | $800.00 | Other | ⚠️ should be Housing |
+| Gas tank fill-up | $600.00 | Transportation | ✅ |
+| Uber ride for the office | $150.00 | Transportation | ✅ |
+| Tacos for dinner | $250.00 | Food | ✅ |
+| Weekly groceries | $1,200.00 | Food | ✅ |
+| electric bill | $400.00 | Utilities | ✅ |
+| Monthly internet subscription | $25.00 | Utilities | ✅ |
+| Car insurance renewal | $150.00 | Insurance | ✅ |
+| annual renter's insurance premium | $60.00 | Insurance | ✅ |
+| Transfer to emergency fund | $5,000.00 | Savings | ✅ |
+| Investment in index fund | $2,000.00 | Savings | ✅ |
+| Credit card payment | $300.00 | Debt | ✅ |
+| Monthly car loan payment | $4,000.00 | Debt | ✅ |
+| practice exam for Azure AI certification | $40.00 | Education | ✅ |
+| online software architecture course | $300.00 | Education | ✅ |
+| Movie tickets and popcorn | $350.00 | Entertainment | ✅ |
+| video game | $1,200.00 | Entertainment | ✅ |
+| birthday gift for Emilia | $800.00 | Other | ✅ |
+| Donation to local animal shelter | $200.00 | Other | ✅ |
+
+**Result: 19/20 correct — ~95% accuracy** 🎯
+
+> The only miscategorization was _"floor tiles for bathroom renovation"_ labeled as `Other` instead of `Housing`. All other expenses were correctly extracted and categorized.
+
 ---
 
 ## 🎨 Code Style
