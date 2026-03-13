@@ -1,7 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
 import { Telegraf } from "telegraf";
-import axios from "axios";
 import { sendExpenseConfirmation, sendFallbackMessage, sendErrorMessage } from "./telegram.js";
 import { processMessage } from "./botClient.js";
 
@@ -22,10 +21,10 @@ if (!TELEGRAM_BOT_TOKEN) {
 const app = express();
 const bot = new Telegraf(TELEGRAM_BOT_TOKEN);
 
-app.use(express.json());
-
-// ── Webhook endpoint ── must be BEFORE app.listen ─────────────────────────────
+// ✅ MUST be before express.json() and all other routes
 app.use(bot.webhookCallback("/webhook"));
+
+app.use(express.json());
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get("/health", (req, res) => {
