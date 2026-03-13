@@ -11,6 +11,8 @@ from database import save_expense
 
 warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
 
+os.makedirs("logs", exist_ok=True)
+
 # Configure colorlog
 handler = colorlog.StreamHandler()
 handler.setFormatter(colorlog.ColoredFormatter(
