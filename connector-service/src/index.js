@@ -24,6 +24,14 @@ const bot = new Telegraf(TELEGRAM_BOT_TOKEN);
 
 app.use(express.json());
 
+// ── Webhook endpoint ── must be BEFORE app.listen ─────────────────────────────
+app.use(bot.webhookCallback("/webhook"));
+
+// ── Health check ──────────────────────────────────────────────────────────────
+app.get("/health", (req, res) => {
+    res.json({ status: "ok" });
+});
+
 // ── Bot logic ─────────────────────────────────────────────────────────────────
 bot.on("text", async (ctx) => {
     const userId = ctx.from.id;
@@ -46,22 +54,14 @@ bot.on("text", async (ctx) => {
     }
 });
 
-// ── Webhook endpoint ──────────────────────────────────────────────────────────
-app.use(bot.webhookCallback("/webhook"));
-
-// ── Health check ──────────────────────────────────────────────────────────────
-app.get("/health", (req, res) => {
-    res.json({ status: "ok" });
-});
-
 // ── Start server ──────────────────────────────────────────────────────────────
 app.listen(PORT, async () => {
     console.log(`🚀 Connector service running on port ${PORT}`);
 
     if (WEBHOOK_DOMAIN) {
         // Production: set webhook
-        await bot.telegram.setWebhook(`${WEBHOOK_DOMAIN}/webhook`);
-        console.log(`🔗 Webhook set to: ${WEBHOOK_DOMAIN}/webhook`);
+        await bot.telegram.setWebhook(`https://${WEBHOOK_DOMAIN}/webhook`);
+        console.log(`🔗 Webhook set to: https://${WEBHOOK_DOMAIN}/webhook`);
     } else {
         // Development: use long polling
         await bot.telegram.deleteWebhook();
