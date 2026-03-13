@@ -53,6 +53,28 @@ Telegram User
 
 ---
 
+## 🤖 Model Choice
+
+Darwin Expenses Bot uses **GPT-4o-mini** for expense extraction. This was a deliberate decision — expense extraction is a straightforward structured output task that doesn't require a larger, more expensive model. GPT-4o-mini provides:
+
+- ✅ Fast response times
+- ✅ Low cost per request
+- ✅ Sufficient accuracy for entity extraction (description, amount, category)
+- ✅ Reliable structured output via LangChain
+
+---
+
+## 🎨 Code Style
+
+All Python code in this project is formatted with **[Black](https://black.readthedocs.io/en/stable/)** — the uncompromising Python code formatter.
+
+```bash
+# Format all Python files
+black bot-service/
+```
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites

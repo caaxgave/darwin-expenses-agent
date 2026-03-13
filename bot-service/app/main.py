@@ -15,17 +15,21 @@ os.makedirs("logs", exist_ok=True)
 
 # Configure colorlog
 handler = colorlog.StreamHandler()
-handler.setFormatter(colorlog.ColoredFormatter(
-    '%(log_color)s%(asctime)s - %(levelname)s - %(message)s',
-    log_colors={
-        'DEBUG': 'cyan',
-        'INFO': 'green',
-        'WARNING': 'yellow',
-        'ERROR': 'red',
-        'CRITICAL': 'red,bg_white',
-    }
-))
-logging.basicConfig(level=logging.INFO, handlers=[logging.FileHandler('logs/main.log'), handler])
+handler.setFormatter(
+    colorlog.ColoredFormatter(
+        "%(log_color)s%(asctime)s - %(levelname)s - %(message)s",
+        log_colors={
+            "DEBUG": "cyan",
+            "INFO": "green",
+            "WARNING": "yellow",
+            "ERROR": "red",
+            "CRITICAL": "red,bg_white",
+        },
+    )
+)
+logging.basicConfig(
+    level=logging.INFO, handlers=[logging.FileHandler("logs/main.log"), handler]
+)
 logger = logging.getLogger(__name__)
 
 # Load environment variables
@@ -35,15 +39,17 @@ load_dotenv()
 app = FastAPI(
     title="Darwin Expenses Agent",
     description="LLM-powered expense extraction service",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # ── Routes ────────────────────────────────────────────────────────────────────
+
 
 @app.get("/health")
 def health_check():
     """Health check endpoint."""
     return {"status": "ok"}
+
 
 @app.post("/process")
 async def process_message(request: MessageRequest):
@@ -60,10 +66,10 @@ async def process_message(request: MessageRequest):
         # Step 2: Save to DB only if it's an actual expense
         if result.is_expense:
             await save_expense(
-                user_id=request.user_id,       # needs to be added to MessageRequest
+                user_id=request.user_id,  # needs to be added to MessageRequest
                 description=result.description,
                 amount=result.amount,
-                category=result.category
+                category=result.category,
             )
 
         return result
@@ -74,8 +80,10 @@ async def process_message(request: MessageRequest):
         logger.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+
 if __name__ == "__main__":
     import uvicorn
+
     port = int(os.getenv("PORT", 8000))
     logger.info(f"Starting Darwin Expenses Agent on port {port}")
     uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)

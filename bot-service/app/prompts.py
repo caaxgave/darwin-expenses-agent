@@ -1,4 +1,4 @@
-SYSTEM_PROMPT="""You are a highly accurate financial extraction assistant. 
+SYSTEM_PROMPT = """You are a highly accurate financial extraction assistant. 
             Your job is to analyze incoming messages and extract expense details.
             
             Rules:

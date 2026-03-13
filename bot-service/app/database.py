@@ -11,11 +11,14 @@ logger = logging.getLogger(__name__)
 
 DATABASE_URL = os.getenv("DATABASE_URL")  # e.g. postgresql://user:pass@host:5432/dbname
 
+
 async def get_connection() -> asyncpg.Connection:
     """Creates and returns a new database connection."""
     return await asyncpg.connect(DATABASE_URL)
 
+
 # ── Database operations ───────────────────────────────────────────────────────
+
 
 async def get_or_create_user(telegram_id: int) -> int:
     """
@@ -31,9 +34,11 @@ async def get_or_create_user(telegram_id: int) -> int:
             ON CONFLICT (telegram_id) DO UPDATE SET telegram_id = EXCLUDED.telegram_id
             RETURNING id
             """,
-            str(telegram_id)  # ✅ Cast to text to match users.telegram_id column type
+            str(telegram_id),  # ✅ Cast to text to match users.telegram_id column type
         )
-        logger.info(f"Upserted user with telegram_id {telegram_id}, internal id: {row['id']}")
+        logger.info(
+            f"Upserted user with telegram_id {telegram_id}, internal id: {row['id']}"
+        )
         return row["id"]
     except Exception as e:
         logger.error(f"Error upserting user with telegram_id {telegram_id}: {e}")
@@ -42,7 +47,9 @@ async def get_or_create_user(telegram_id: int) -> int:
         await conn.close()
 
 
-async def save_expense(user_id: int, description: str, amount: float, category: str) -> dict:
+async def save_expense(
+    user_id: int, description: str, amount: float, category: str
+) -> dict:
     """
     Resolves the internal user id from the Telegram user id,
     then inserts a new expense record into the database.
@@ -63,7 +70,7 @@ async def save_expense(user_id: int, description: str, amount: float, category: 
             description,
             str(amount),  # ✅ cast float to str for asyncpg compatibility
             category,
-            datetime.now(timezone.utc).replace(tzinfo=None)
+            datetime.now(timezone.utc).replace(tzinfo=None),
         )
         logger.info(f"Saved expense: {description} - {amount} for user_id {user_id}")
         return dict(row)
@@ -90,7 +97,7 @@ async def get_expenses_by_user(user_id: int) -> list[dict]:
             WHERE user_id = $1
             ORDER BY added_at DESC
             """,
-            internal_user_id  # ✅ Use internal FK-safe id
+            internal_user_id,  # ✅ Use internal FK-safe id
         )
         logger.info(f"Retrieved {len(rows)} expenses for user_id {user_id}")
         return [dict(row) for row in rows]
